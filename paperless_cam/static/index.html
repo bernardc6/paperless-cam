@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>paperless-cam</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="scanner readable-unknown" id="scanner">
+        <header class="topbar">
+          <div class="brand">
+            <img src="/static/logo.jpeg" alt="" />
+            <div>
+              <h1>paperless-cam</h1>
+              <p id="statusText">Checking camera...</p>
+            </div>
+          </div>
+          <div class="readability" id="readability">Waiting</div>
+        </header>
+
+        <div class="preview-wrap">
+          <img id="preview" class="preview" alt="Live document preview" />
+        </div>
+
+        <div class="controls" aria-label="Scanner controls">
+          <button id="addButton" type="button">Add another photo</button>
+          <button id="uploadButton" class="primary" type="button">Done &amp; Upload</button>
+          <button id="newButton" class="secondary" type="button">New</button>
+        </div>
+
+        <div class="filmstrip" id="filmstrip" aria-label="Captured pages"></div>
+      </section>
+    </main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>

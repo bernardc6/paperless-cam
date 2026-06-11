@@ -1,0 +1,25 @@
+[project]
+name = "paperless-cam"
+version = "0.1.0"
+description = "A tiny USB webcam document scanner for Paperless-ngx."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+  "fastapi==0.115.6",
+  "numpy==2.2.1",
+  "opencv-python-headless==4.10.0.84",
+  "pillow==11.1.0",
+  "python-multipart==0.0.20",
+  "requests==2.32.3",
+  "uvicorn[standard]==0.34.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx==0.28.1",
+  "pytest==8.3.4",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
