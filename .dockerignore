@@ -5,5 +5,7 @@ __pycache__/
 *.pyc
 .env
 scans/
+stage/
+consume/
 tests/
 README.md

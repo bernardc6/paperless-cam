@@ -1,21 +1,23 @@
-FROM python:3.12-slim
+FROM python:3.11-slim-bookworm
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends libgl1 libglib2.0-0 \
+    && apt-get install -y --no-install-recommends libgl1-mesa-glx libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY paperless_cam ./paperless_cam
+COPY app.py .
+COPY paperless_cam/static ./paperless_cam/static
 COPY paperless-cam-logo.jpeg ./paperless-cam-logo.jpeg
 
-RUN mkdir -p /data/scans
-ENV PAPERLESS_CAM_OUTPUT_DIR=/data/scans
-EXPOSE 8000
+RUN mkdir -p /data/stage /consume
+ENV PAPERLESS_CAM_STAGE_DIR=/data/stage \
+    PAPERLESS_CAM_CONSUME_DIR=/consume
+EXPOSE 5000
 
-CMD ["uvicorn", "paperless_cam.server:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "app.py"]

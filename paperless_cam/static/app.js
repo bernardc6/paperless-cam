@@ -17,13 +17,9 @@ function setBusy(nextBusy) {
   });
 }
 
-function refreshPreview() {
-  preview.src = `/api/preview.jpg?t=${Date.now()}`;
-}
-
 async function refreshQuality() {
   try {
-    const response = await fetch("/api/quality", { cache: "no-store" });
+    const response = await fetch("/quality", { cache: "no-store" });
     const report = await response.json();
     scanner.classList.toggle("readable-yes", report.readable === true);
     scanner.classList.toggle("readable-no", report.readable === false);
@@ -41,14 +37,18 @@ async function refreshQuality() {
 }
 
 async function refreshCaptures() {
-  const response = await fetch("/api/captures", { cache: "no-store" });
+  const response = await fetch("/status", { cache: "no-store" });
   const payload = await response.json();
+  const captures = [...payload.pages];
+  if (payload.pending) {
+    captures.push(payload.pending);
+  }
   filmstrip.replaceChildren(
-    ...payload.captures.map((capture, index) => {
+    ...captures.map((capture, index) => {
       const item = document.createElement("div");
       item.className = "thumb";
       const image = document.createElement("img");
-      image.src = `${capture.thumbnail}?t=${Date.now()}`;
+      image.src = `${capture.image}?t=${Date.now()}`;
       image.alt = `Captured page ${index + 1}`;
       const label = document.createElement("span");
       label.textContent = `Page ${index + 1}`;
@@ -61,7 +61,8 @@ async function refreshCaptures() {
 async function addCapture() {
   setBusy(true);
   try {
-    await fetch("/api/captures", { method: "POST" });
+    await fetch("/capture", { method: "POST" });
+    await fetch("/keep", { method: "POST" });
     await refreshCaptures();
     statusText.textContent = "Page added.";
   } finally {
@@ -73,7 +74,7 @@ async function upload() {
   setBusy(true);
   try {
     statusText.textContent = "Creating PDF and uploading...";
-    const response = await fetch("/api/upload", { method: "POST" });
+    const response = await fetch("/finalize", { method: "POST" });
     const payload = await response.json();
     if (!response.ok) {
       throw new Error(payload.detail || "Upload failed");
@@ -92,7 +93,7 @@ async function upload() {
 async function clearCaptures() {
   setBusy(true);
   try {
-    await fetch("/api/captures", { method: "DELETE" });
+    await fetch("/new", { method: "POST" });
     await refreshCaptures();
     statusText.textContent = "Ready for a new document.";
   } finally {
@@ -104,12 +105,10 @@ addButton.addEventListener("click", addCapture);
 uploadButton.addEventListener("click", upload);
 newButton.addEventListener("click", clearCaptures);
 
-refreshPreview();
 refreshQuality();
 refreshCaptures();
 setInterval(() => {
   if (!busy) {
-    refreshPreview();
     refreshQuality();
   }
 }, 1200);

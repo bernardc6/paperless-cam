@@ -4,10 +4,11 @@ services:
     container_name: paperless-cam
     restart: unless-stopped
     ports:
-      - "8000:8000"
+      - "5000:5000"
     env_file:
       - .env
     devices:
       - "/dev/video0:/dev/video0"
     volumes:
-      - "./scans:/data/scans"
+      - "./stage:/data/stage"
+      - "./consume:/consume"

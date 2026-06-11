@@ -4,6 +4,8 @@ __pycache__/
 .venv/
 .env
 scans/
+stage/
+consume/
 dist/
 build/
 *.egg-info/
